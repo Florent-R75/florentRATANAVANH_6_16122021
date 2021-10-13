@@ -1,11 +1,11 @@
 const bcrypt = require("bcrypt");
-
 const User = require("../models/UserModel");
+const jwt = require('jsonwebtoken');
 
+// Hachage du mot de passe et création d'un nouvel utilisateur
 exports.signup = (req, res, next) => {
 	bcrypt
 		.hash(req.body.password, 10)
-
 		.then(hash => {
 			const user = new User({
 				email: req.body.email,
@@ -32,7 +32,11 @@ exports.login = (req, res, next) => {
 					}
 					res.status(200).json({
 						userId: user._id,
-						token: "TOKEN2"
+						token: jwt.sign(
+							{ userId: user._id },
+							'RANDOM_TOKEN_SECRET',
+							{ expiresIn:'24h'}
+						)
 					});
 				})
 				.catch(error => res.status(500).json({ error }));

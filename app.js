@@ -1,10 +1,9 @@
-/*  */const express = require("express");
+const express = require("express");
 
 const app = express();
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
-const Sauce = require("./models/SauceModel");
-const stuffRoutes = require("./routes/stuffRoutes");
+const sauceRoutes = require("./routes/sauceRoutes");
 const userRoutes = require("./routes/userRoutes");
 
 // --------MONGO DB------------------
@@ -32,7 +31,7 @@ next();
 app.use(bodyParser.json());
 // Configuration des routes
 
-app.use("/api/sauces", stuffRoutes);
+app.use("/api/sauces", sauceRoutes);
 
 app.use("/api/auth", userRoutes);
 
