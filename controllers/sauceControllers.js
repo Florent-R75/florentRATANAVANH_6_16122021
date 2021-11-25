@@ -1,9 +1,11 @@
 const Sauce = require("../models/SauceModel");
 
 exports.createSauces = (req, res, next) => {
-	delete req.body._id;
+	const sauceObject = JSON.parse(req.body.sauce);
+    delete sauceObject._id;
 	const sauce = new Sauce({
-		...req.body
+		...sauceObject,
+        imageUrl:`${req.protocol}://${req.get('host')}/images/${req.file.filename}`
 	});
 	sauce
 		.save()
@@ -15,4 +17,10 @@ exports.listSauces = (req, res, next) => {
 	Sauce.find()
 		.then(sauces => res.status(200).json(sauces))
 		.catch(error => res.status(400).json({ error }));
+};
+
+exports.getSauces = (req, res, next) => {
+    Sauce.findOne({_id: req.params.id})
+        .then(sauce => res.status(200).json(sauce))
+        .catch(error => res.status(404).json({ error }));
 };

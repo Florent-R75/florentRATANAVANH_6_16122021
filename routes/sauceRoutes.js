@@ -1,7 +1,9 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const sauceCtrl = require("../controllers/sauceControllers");
+const sauceCtrl = require('../controllers/sauceControllers');
+const multer = require('../middleware/multerConfig');
 
-router.post("/", sauceCtrl.createSauces);
-router.get("/", sauceCtrl.listSauces);
+router.post('/', multer, sauceCtrl.createSauces).get('/', sauceCtrl.listSauces);
+// router.get("/", sauceCtrl.listSauces);
+router.get('/:id', sauceCtrl.getSauces);
 module.exports = router;
