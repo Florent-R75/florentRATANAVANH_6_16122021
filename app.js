@@ -4,6 +4,7 @@ const app = express();
 
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+
 const sauceRoutes = require('./routes/sauceRoutes');
 const userRoutes = require('./routes/userRoutes');
 const path = require('path');
@@ -14,15 +15,7 @@ if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
 }
 
-// --------MONGO DB------------------
-
-// mongoose
-//   .connect(
-//     'mongodb+srv://FlorentR:9G4my7iTwLZyScSf@cluster0.eeqyf.mongodb.net/myFirstDatabase?retryWrites=true&w=majority',
-//     { useNewUrlParser: true, useUnifiedTopology: true }
-//   )
-//   .then(() => console.log('Connexion à MongoDB réussie !'))
-//   .catch(() => console.log('Connexion à MongoDB échouée !'));
+// Connection Mongoose.
 
 const DB = process.env.DATABASE.replace(
   '<PASSWORD>',
@@ -33,7 +26,6 @@ mongoose
   .connect(DB, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-    
   })
   .then(() => console.log('Connexion à MongoDB réussie !'))
   .catch(() => console.log('Connexion à MongoDB échouée !'));
@@ -62,31 +54,8 @@ app.use('/api/sauces', sauceRoutes);
 app.use('/api/auth', userRoutes);
 app.use('/images', express.static(path.join(__dirname, 'images')));
 
-// GESTION ERREURS
 
-app.all('*', (req, res, next) => {
-  //   res.status(404).json({
-  //     status: 'echec',
-  //     message: `Impossible de trouver ${req.originalUrl} sur ce serveur!`
-  //   });
 
-  const err = new Error(
-    `Impossible de trouver ${req.originalUrl} sur ce serveur!`
-  );
-  err.status = 'echec';
-  err.statusCode = 404;
 
-  next(err);
-});
-
-app.use((err, req, res, next) => {
-  err.statusCode = err.statusCode || 500;
-  err.status = err.status || 'error';
-
-  res.status(err.statusCode).json({
-    status: err.status,
-    message: err.message,
-  });
-});
 
 module.exports = app;
