@@ -50,13 +50,13 @@ const sauceSchema = mongoose.Schema({
   likes: {
     type: Number,
     default: 0,
-    enum: [1, 0, 'Only One like or dislike is authorized'],
+    // enum: [1, 0, 'Only One like or dislike is authorized'],
     validate: [validator, 'Theses characters are not allowed:([<>\/])']
   },
   dislikes: {
     type: Number,
     default: 0,
-    enum: [-1, 0, 'Only One like or dislike is authorized'],
+    // enum: [-1, 0, 'Only One like or dislike is authorized'],
     validate: [validator, 'Theses characters are not allowed:([<>\/])']
   },
   usersLiked: { type: Array, validate: [validator, 'Theses characters are not allowed:([<>\/])'] }, 

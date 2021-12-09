@@ -40,14 +40,26 @@ exports.updateSauce = (req, res, next) => {
   if (!req.file) {
     Sauce.updateOne(
       { _id: req.params.id },
-      { ...req.body, _id: req.params.id },
+      {
+        // name: req.body.name,
+        _id: req.params.id,
+        // manufacturer: req.body.manufacturer,
+        // description: req.body.description,
+        // mainPepper: req.body.mainPepper,
+        // heat: req.body.heat,
+        ...req.body,
+      },
       { runValidators: true }
     )
-      .then((sauce) => res.status(200).json(sauce))
+      .then((sauce) =>
+        res
+          .status(200)
+          .json({ message: 'Votre modification a bien ete pris en compte' })
+      )
       .catch((error) => res.status(404).json({ error }));
   } else {
     const sauceObject = JSON.parse(req.body.sauce);
-
+    console.log(sauceObject);
     // Recherche du chemin de l'image de l'objet et suppression de l'image
     Sauce.findOne({ _id: req.params.id }).then((sauce) => {
       const filename = sauce.imageUrl.split('/images/')[1];
@@ -57,15 +69,24 @@ exports.updateSauce = (req, res, next) => {
     Sauce.updateOne(
       { _id: req.params.id },
       {
-        ...sauceObject,
+        ...req.body,
+        // name: req.body.name,
         _id: req.params.id,
+        // manufacturer: req.body.manufacturer,
+        // description: req.body.description,
+        // mainPepper: req.body.mainPepper,
+        // heat: req.body.heat,
         imageUrl: `${req.protocol}://${req.get('host')}/images/${
           req.file.filename
         }`,
       },
       { runValidators: true }
     )
-      .then((sauce) => res.status(200).json(sauce))
+      .then((sauce) =>
+        res
+          .status(200)
+          .json({ message: 'Votre image a bien ete pris en compte' })
+      )
       .catch((error) => res.status(404).json({ error }));
   }
 };
@@ -96,48 +117,76 @@ exports.likeSauce = (req, res, next) => {
 
       // Si l'utilisateur like pour la 1er fois
 
-      if (!arrayLiked.includes(req.body.userId) && req.body.like == 1) {
+      if (!arrayLiked.includes(req.body.userId) && req.body.like === 1) {
         arrayLiked.push(req.body.userId);
         sauce.likes = arrayLiked.length;
 
-        sauce.save();
+        sauce
+          .save()
+          .then(
+            res.status(200).json({
+              status: 'succès',
+              message: 'Votre avis a été pris en compte',
+            })
+          )
+          .catch((err) => res.status(400).json({ error }));
       }
 
       // Si l'utilisateur annule son like
-
-      if (arrayLiked.includes(req.body.userId) && req.body.like == 0) {
+      else if (arrayLiked.includes(req.body.userId) && req.body.like === 0) {
         arrayLiked.splice(indexOfUserLiked);
         sauce.likes = arrayLiked.length;
 
-        sauce.save();
+        sauce
+          .save()
+          .then(
+            res.status(200).json({
+              status: 'succès',
+              message: 'Votre modification a été prise en compte',
+            })
+          )
+          .catch((err) => res.status(400).json({ error }));
       }
 
       // si l'utilisateur annule son dislike
-      else if (arrayDisliked.includes(req.body.userId) && req.body.like == 0) {
+      else if (arrayDisliked.includes(req.body.userId) && req.body.like === 0) {
         arrayDisliked.splice(indexOfUserDisliked);
         sauce.dislikes = arrayDisliked.length;
 
-        sauce.save();
+        sauce
+          .save()
+          .then(
+            res.status(200).json({
+              status: 'succès',
+              message: 'Votre modification a été prise en compte',
+            })
+          )
+          .catch((err) => res.status(400).json({ error }));
       }
 
       // Si l'utilisateur dislike
       else if (
         !arrayDisliked.includes(req.body.userId) &&
-        req.body.like == -1
+        req.body.like === -1
       ) {
         arrayDisliked.push(req.body.userId);
         sauce.dislikes = arrayDisliked.length;
 
-        sauce.save();
+        sauce
+          .save()
+          .then(
+            res.status(200).json({
+              status: 'succès',
+              message: 'Votre avis a été pris en compte',
+            })
+          )
+          .catch((err) => res.status(400).json({ error }));
       } else {
-        console.log('vous avez deja donnée votre avis');
-        return res.status(500);
+        res.status(200).json({
+          statut: 'null',
+          message: 'Vous avez deja donnée votre avis',
+        });
       }
-
-      res.status(200).json({
-        status: 'succès',
-        message: 'Votre avis a été pris en compte',
-      });
     })
     .catch((error) => res.status(404).json({ error }));
 };
