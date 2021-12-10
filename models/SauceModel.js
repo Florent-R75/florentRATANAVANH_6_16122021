@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const mongooseUniqueValidator = require('mongoose-unique-validator');
 
 const validator = function (v) {
-  const regex = /([<>\/])/;
+  const regex = /({[<>\*&|±§`~/]})/;
   let function_reply = true;
   if (regex.test(v)) return (function_reply = false);
 };

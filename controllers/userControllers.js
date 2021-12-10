@@ -3,22 +3,33 @@ const User = require('../models/UserModel');
 const jwt = require('jsonwebtoken');
 
 // Hachage du mot de passe et création d'un nouvel utilisateur
-exports.signup = (req, res, next) => {
-  bcrypt
-    .hash(req.body.password, 10)
-    .then((hash) => {
-      const user = new User({
-        email: req.body.email,
-        password: hash,
-      });
-      user
-        .save()
-        .then(() => res.status(201).json({ message: 'Utilisateur créé !' }))
-        .catch((error) => res.status(400).json({ error }));
-    })
-    .catch((error) => res.status(500).json({ error }));
-};
 
+
+exports.signup = (req, res, next) => {
+  WordCount = function (str) {
+    return str.length;
+  };
+
+  if (WordCount(req.body.password) >= 8) {
+    bcrypt
+      .hash(req.body.password, 10)
+      .then((hash) => {
+        const user = new User({
+          email: req.body.email,
+          password: hash,
+        });
+        user
+          .save()
+          .then(() => res.status(201).json({ message: 'Utilisateur créé !' }))
+          .catch((error) => res.status(400).json({ error }));
+      })
+      .catch((error) => res.status(500).json({ error }));
+  } else {
+    res.status(400).json({
+      message: 'Votre mot de passe doit contenir au minimum 8 caracteres',
+    });
+  }
+};
 exports.login = (req, res, next) => {
   User.findOne({ email: req.body.email })
     .then((user) => {
