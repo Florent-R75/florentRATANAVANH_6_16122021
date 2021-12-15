@@ -1,6 +1,8 @@
 const express = require('express');
-const morgan = require('morgan');
 const app = express();
+const morgan = require('morgan');
+const helmet = require('helmet');
+const mongoSanitize = require('express-mongo-sanitize');
 
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
@@ -46,6 +48,14 @@ app.use((req, res, next) => {
 });
 
 app.use(bodyParser.json());
+app.use(helmet());
+app.use(mongoSanitize({
+  
+  onSanitize: ({ req, key }) => {
+    console.warn(`This request[${key}] is sanitized`, req);
+    console.log('sanitize*********');
+  },
+}));
 
 // Configuration des routes
 
@@ -53,9 +63,5 @@ app.use('/api/sauces', sauceRoutes);
 
 app.use('/api/auth', userRoutes);
 app.use('/images', express.static(path.join(__dirname, 'images')));
-
-
-
-
 
 module.exports = app;

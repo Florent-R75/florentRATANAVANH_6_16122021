@@ -4,13 +4,8 @@ const jwt = require('jsonwebtoken');
 
 // Hachage du mot de passe et création d'un nouvel utilisateur
 
-
 exports.signup = (req, res, next) => {
-  WordCount = function (str) {
-    return str.length;
-  };
-
-  if (WordCount(req.body.password) >= 8) {
+  if (req.body.password.length >= 8) {
     bcrypt
       .hash(req.body.password, 10)
       .then((hash) => {

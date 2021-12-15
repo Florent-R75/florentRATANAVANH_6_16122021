@@ -3,7 +3,7 @@ const router = express.Router();
 const sauceCtrl = require('../controllers/sauceControllers');
 const multer = require('../middleware/multerConfig');
 const auth = require('./../middleware/auth');
-const perm=require('./../middleware/permission');
+const perm = require('./../middleware/permission');
 
 router
   .route('/')
@@ -13,8 +13,8 @@ router
 router
   .route('/:id')
   .get(auth, sauceCtrl.getOneSauce)
-  .put(auth, perm, sauceCtrl.updateSauce)
-  .delete(auth, perm, sauceCtrl.deleteSauce);
+  .put(auth, perm, multer, sauceCtrl.updateSauce)
+  .delete(auth, perm, multer, sauceCtrl.deleteSauce);
 
 router.route('/:id/like').post(sauceCtrl.likeSauce);
 

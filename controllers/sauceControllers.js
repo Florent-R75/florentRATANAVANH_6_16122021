@@ -41,13 +41,12 @@ exports.updateSauce = (req, res, next) => {
     Sauce.updateOne(
       { _id: req.params.id },
       {
-        // name: req.body.name,
+        name: req.body.name,
         _id: req.params.id,
-        // manufacturer: req.body.manufacturer,
-        // description: req.body.description,
-        // mainPepper: req.body.mainPepper,
-        // heat: req.body.heat,
-        ...req.body,
+        manufacturer: req.body.manufacturer,
+        description: req.body.description,
+        mainPepper: req.body.mainPepper,
+        heat: req.body.heat,
       },
       { runValidators: true }
     )
@@ -59,7 +58,7 @@ exports.updateSauce = (req, res, next) => {
       .catch((error) => res.status(404).json({ error }));
   } else {
     const sauceObject = JSON.parse(req.body.sauce);
-    console.log(sauceObject);
+    
     // Recherche du chemin de l'image de l'objet et suppression de l'image
     Sauce.findOne({ _id: req.params.id }).then((sauce) => {
       const filename = sauce.imageUrl.split('/images/')[1];
@@ -69,13 +68,13 @@ exports.updateSauce = (req, res, next) => {
     Sauce.updateOne(
       { _id: req.params.id },
       {
-        ...req.body,
-        // name: req.body.name,
+        // ...req.body,
+        name: req.body.name,
         _id: req.params.id,
-        // manufacturer: req.body.manufacturer,
-        // description: req.body.description,
-        // mainPepper: req.body.mainPepper,
-        // heat: req.body.heat,
+        manufacturer: req.body.manufacturer,
+        description: req.body.description,
+        mainPepper: req.body.mainPepper,
+        heat: req.body.heat,
         imageUrl: `${req.protocol}://${req.get('host')}/images/${
           req.file.filename
         }`,
@@ -97,12 +96,12 @@ exports.deleteSauce = (req, res, next) => {
   Sauce.findOne({ _id: req.params.id })
     .then((sauce) => {
       const filename = sauce.imageUrl.split('/images/')[1];
-      fs.unlink(`images/${filename}`, () => {
-        Sauce.deleteOne({ _id: req.params.id })
-          .then(() => res.status(200).json({ message: 'Objet supprimé !' }))
-          .catch((error) => res.status(400).json({ error }));
-      });
+      fs.unlink(`images/${filename}`, (err) => err);
+      Sauce.deleteOne({ _id: req.params.id })
+        .then(() => res.status(200).json({ message: 'Objet supprimé !' }))
+        .catch((error) => res.status(400).json({ error }));
     })
+
     .catch((error) => res.status(500).json({ error }));
 };
 

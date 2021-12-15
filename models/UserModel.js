@@ -1,15 +1,13 @@
 const mongoose = require('mongoose');
-
 const uniqueValidator = require('mongoose-unique-validator');
-
 
 
 // Function contre l'injection SQL
 const validator = function (v) {
-const regex = /({[<>\*&|±§`~/]})/;
-    let function_reply = true;
-    if (regex.test(v)) return (function_reply = false);
-  };
+  const regex = /([<>&*()=+{}[}|\//])/;
+  let function_reply = true;
+  if (regex.test(v)) return (function_reply = false);
+};
 
 const userSchema = mongoose.Schema({
   email: {
@@ -18,6 +16,7 @@ const userSchema = mongoose.Schema({
     unique: true,
     trim: true,
     lowercase: true,
+  
     match: [
       /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/,
       'Entrez une adresse email valide',
@@ -27,10 +26,10 @@ const userSchema = mongoose.Schema({
   password: {
     type: String,
     required: true,
-    
   },
 });
 
 userSchema.plugin(uniqueValidator);
+// userSchema.plugin(mongodbErrorHandler);
 
 module.exports = mongoose.model('User', userSchema);
