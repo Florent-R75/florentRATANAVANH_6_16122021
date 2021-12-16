@@ -1,6 +1,9 @@
 const jwt = require('jsonwebtoken');
 const SauceModel = require('../models/SauceModel');
 
+
+// Decodage du token renvoyé par le front, stockage de l'id du user et comparaison avec l'id fourni par la requete.
+
 module.exports = (req, res, next) => {
   try {
     let token = req.headers.authorization.split(' ')[1];

@@ -3,15 +3,15 @@ const app = express();
 const morgan = require('morgan');
 const helmet = require('helmet');
 const mongoSanitize = require('express-mongo-sanitize');
-
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
-
 const sauceRoutes = require('./routes/sauceRoutes');
 const userRoutes = require('./routes/userRoutes');
 const path = require('path');
 
-//  MIDDLEWARES
+//  MIDDLEWARES*****************
+
+// middleware de log
 
 if (process.env.NODE_ENV === 'development') {
   app.use(morgan('dev'));
@@ -48,14 +48,18 @@ app.use((req, res, next) => {
 });
 
 app.use(bodyParser.json());
+
+// Middleware de securite
+
 app.use(helmet());
-app.use(mongoSanitize({
-  
-  onSanitize: ({ req, key }) => {
-    console.warn(`This request[${key}] is sanitized`, req);
-    console.log('sanitize*********');
-  },
-}));
+app.use(
+  mongoSanitize({
+    onSanitize: ({ req, key }) => {
+      console.warn(`This request[${key}] is sanitized`, req);
+      console.log('sanitize*********');
+    },
+  })
+);
 
 // Configuration des routes
 

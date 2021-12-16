@@ -1,7 +1,5 @@
-# Compétences évaluées
+Important:
 
-1. Implémenter un modèle logique de données conformément à la réglementation
+Utiliser un fichier config.env a la racine du dossier <back-end>pour la connection de votre base de données.
 
-2. Stocker des données de manière sécurisée
-
-3. Mettre en œuvre des opérations CRUD de manière sécurisée
+Dans le fichier server, voici le chemin qui pointe vers le fichier de configuration: dotenv.config({ path: './config.env' });

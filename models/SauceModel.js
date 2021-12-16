@@ -1,12 +1,14 @@
 const mongoose = require('mongoose');
-const mongooseUniqueValidator = require('mongoose-unique-validator');
-const mongodbErrorHandler = require('mongoose-mongodb-errors');
+
+// Fonction contre l'injection SQL
 
 const validator = function (v) {
-  const regex = /([<>&*()=+{}[}|\//])/;
+  const regex = /([<>&*()=+{}$.[}|\//])/;
   let function_reply = true;
   if (regex.test(v)) return (function_reply = false);
 };
+
+// Schema Mongoose, avec validation des données
 
 const sauceSchema = mongoose.Schema({
   userId: { type: String, required: true },
@@ -16,7 +18,10 @@ const sauceSchema = mongoose.Schema({
     minlength: [2, 'A sauce must have more or equal than 2 characters'],
     maxlength: [15, 'A sauce must have less or equal than 15 characters'],
     trim: true,
-    validate: [validator, 'Theses characters are not allowed: (<>&*()=+{}[}|\/)'],
+    validate: [
+      validator,
+      'Theses characters are not allowed: (<>&*()=+{}[}|/)',
+    ],
   },
   manufacturer: {
     type: String,
@@ -29,14 +34,14 @@ const sauceSchema = mongoose.Schema({
       15,
       'A manufacturer name must have less or equal than 15 characters',
     ],
-    validate: [validator, 'Theses characters are not allowed:(<>&*()=+{}[}|\/)'],
+    validate: [validator, 'Theses characters are not allowed:(<>&*()=+{}[}|/)'],
   },
   description: {
     type: String,
     required: [true, 'A description is required'],
     maxlength: [300, 'A sauce must have less or equal than 15 characters'],
     minlength: [2, 'A sauce must have more or equal than 2 characters'],
-    validate: [validator, 'Theses characters are not allowed:(<>&*()=+{}[}|\/)'],
+    validate: [validator, 'Theses characters are not allowed:(<>&*()=+{}[}|/)'],
   },
   mainPepper: { type: String, required: [true, 'A main pepper is required'] },
   imageUrl: { type: String, required: false },
@@ -46,30 +51,31 @@ const sauceSchema = mongoose.Schema({
     default: 1,
     min: [1, 'A heat must be above 1'],
     max: [10, 'A heat must be below than 10'],
-    validate: [validator, 'Theses characters are not allowed:(<>&*()=+{}[}|\/)'],
+    validate: [validator, 'Theses characters are not allowed:(<>&*()=+{}[}|/)'],
   },
   likes: {
     type: Number,
     default: 0,
     // enum: [1, 0, 'Only One like or dislike is authorized'],
-    validate: [validator, 'Theses characters are not allowed:(<>&*()=+{}[}|\/)'],
+    validate: [validator, 'Theses characters are not allowed:(<>&*()=+{}[}|/)'],
   },
   dislikes: {
     type: Number,
     default: 0,
     // enum: [-1, 0, 'Only One like or dislike is authorized'],
-    validate: [validator, 'Theses characters are not allowed:(<>&*()=+{}[}|\/))'],
+    validate: [
+      validator,
+      'Theses characters are not allowed:(<>&*()=+{}[}|/))',
+    ],
   },
   usersLiked: {
     type: Array,
-    validate: [validator, 'Theses characters are not allowed:(<>&*()=+{}[}|\/)'],
+    validate: [validator, 'Theses characters are not allowed:(<>&*()=+{}[}|/)'],
   },
   usersDisliked: {
     type: Array,
-    validate: [validator, 'Theses characters are not allowed:(<>&*()=+{}[}|\/)'],
+    validate: [validator, 'Theses characters are not allowed:(<>&*()=+{}[}|/)'],
   },
 });
-
-sauceSchema.plugin(mongodbErrorHandler);
 
 module.exports = mongoose.model('Sauce', sauceSchema);

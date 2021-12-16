@@ -1,6 +1,8 @@
 const Sauce = require('../models/SauceModel');
 const fs = require('fs');
 
+// Creation de la sauce
+
 exports.createSauce = (req, res, next) => {
   const sauceObject = JSON.parse(req.body.sauce);
   delete sauceObject._id;
@@ -32,7 +34,7 @@ exports.getOneSauce = (req, res, next) => {
     .catch((error) => res.status(404).json({ error }));
 };
 
-// Update => Reponse
+// Modification de la sauce, et validation des données
 
 exports.updateSauce = (req, res, next) => {
   // Si l'utilisateur ne modifie pas l'image
@@ -58,8 +60,9 @@ exports.updateSauce = (req, res, next) => {
       .catch((error) => res.status(404).json({ error }));
   } else {
     const sauceObject = JSON.parse(req.body.sauce);
-    
-    // Recherche du chemin de l'image de l'objet et suppression de l'image
+
+    // Recherche du chemin  et suppression de l'image de la sauce
+
     Sauce.findOne({ _id: req.params.id }).then((sauce) => {
       const filename = sauce.imageUrl.split('/images/')[1];
       fs.unlink(`images/${filename}`, (err) => err);
@@ -68,7 +71,6 @@ exports.updateSauce = (req, res, next) => {
     Sauce.updateOne(
       { _id: req.params.id },
       {
-        // ...req.body,
         name: req.body.name,
         _id: req.params.id,
         manufacturer: req.body.manufacturer,
@@ -90,7 +92,7 @@ exports.updateSauce = (req, res, next) => {
   }
 };
 
-// Delete Middleware
+// Suppression de la sauce et de son image
 
 exports.deleteSauce = (req, res, next) => {
   Sauce.findOne({ _id: req.params.id })
@@ -104,6 +106,8 @@ exports.deleteSauce = (req, res, next) => {
 
     .catch((error) => res.status(500).json({ error }));
 };
+
+// Like et Dislike de la sauce, gestion des tableaux et mise a jour des compteurs.
 
 exports.likeSauce = (req, res, next) => {
   Sauce.findOne({ _id: req.params.id })

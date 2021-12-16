@@ -1,5 +1,7 @@
 const multer = require('multer');
 
+// Nommage, stockage et datation de l'image avec le middleware MULTER
+
 const MIME_TYPES = {
     'image/jpg':'jpg',
     'image/jpeg':'jpg',
