@@ -6,15 +6,13 @@ const Sauce = require('../models/SauceModel');
 
 module.exports = (req, res, next) => {
   try {
-    let token = req.headers.authorization.split(' ')[1];
-    let decodedToken = jwt.verify(token, 'RANDOM_TOKEN_SECRET');
-    let userId = decodedToken.userId;
+    
 
     Sauce.findById({ _id: req.params.id })
       .then((sauce) => {
         
 
-        if ( sauce.userId === userId) next();
+        if ( sauce.userId === req.body.decodedToken) next();
         else {
           res.status(403).json({
             message: ' 403: unauthorized request. !',

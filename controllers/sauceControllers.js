@@ -59,7 +59,7 @@ exports.updateSauce = (req, res, next) => {
       )
       .catch((error) => res.status(404).json({ error }));
   } else {
-    const sauceObject = JSON.parse(req.body.sauce);
+    
 
     // Recherche du chemin  et suppression de l'image de la sauce
 
@@ -120,7 +120,11 @@ exports.likeSauce = (req, res, next) => {
 
       // Si l'utilisateur like pour la 1er fois
 
-      if (!arrayLiked.includes(req.body.userId) && req.body.like === 1) {
+      if (
+        !arrayLiked.includes(req.body.userId) &&
+        !arrayDisliked.includes(req.body.userId) &&
+        req.body.like === 1
+      ) {
         arrayLiked.push(req.body.userId);
         sauce.likes = arrayLiked.length;
 
@@ -136,8 +140,12 @@ exports.likeSauce = (req, res, next) => {
       }
 
       // Si l'utilisateur annule son like
-      else if (arrayLiked.includes(req.body.userId) && req.body.like === 0) {
-        arrayLiked.splice(indexOfUserLiked);
+      else if (
+        arrayLiked.includes(req.body.userId) &&
+        !arrayDisliked.includes(req.body.userId) &&
+        req.body.like === 0
+      ) {
+        arrayLiked.splice(indexOfUserLiked, 1);
         sauce.likes = arrayLiked.length;
 
         sauce
@@ -152,8 +160,12 @@ exports.likeSauce = (req, res, next) => {
       }
 
       // si l'utilisateur annule son dislike
-      else if (arrayDisliked.includes(req.body.userId) && req.body.like === 0) {
-        arrayDisliked.splice(indexOfUserDisliked);
+      else if (
+        arrayDisliked.includes(req.body.userId) &&
+        !arrayLiked.includes(req.body.userId) &&
+        req.body.like === 0
+      ) {
+        arrayDisliked.splice(indexOfUserDisliked, 1);
         sauce.dislikes = arrayDisliked.length;
 
         sauce
@@ -169,6 +181,7 @@ exports.likeSauce = (req, res, next) => {
 
       // Si l'utilisateur dislike
       else if (
+        !arrayLiked.includes(req.body.userId) &&
         !arrayDisliked.includes(req.body.userId) &&
         req.body.like === -1
       ) {
