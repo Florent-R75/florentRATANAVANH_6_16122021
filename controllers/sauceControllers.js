@@ -159,6 +159,27 @@ exports.likeSauce = (req, res, next) => {
           .catch((err) => res.status(400).json({ error }));
       }
 
+      
+      
+      // Si l'utilisateur dislike pour la 1er fois
+      else if (
+        !arrayLiked.includes(req.body.userId) &&
+        !arrayDisliked.includes(req.body.userId) &&
+        req.body.like === -1
+      ) {
+        arrayDisliked.push(req.body.userId);
+        sauce.dislikes = arrayDisliked.length;
+
+        sauce
+          .save()
+          .then(
+            res.status(200).json({
+              status: 'succès',
+              message: 'Votre avis a été pris en compte',
+            })
+          )
+          .catch((err) => res.status(400).json({ error }));}
+      
       // si l'utilisateur annule son dislike
       else if (
         arrayDisliked.includes(req.body.userId) &&
@@ -178,26 +199,10 @@ exports.likeSauce = (req, res, next) => {
           )
           .catch((err) => res.status(400).json({ error }));
       }
-
-      // Si l'utilisateur dislike
-      else if (
-        !arrayLiked.includes(req.body.userId) &&
-        !arrayDisliked.includes(req.body.userId) &&
-        req.body.like === -1
-      ) {
-        arrayDisliked.push(req.body.userId);
-        sauce.dislikes = arrayDisliked.length;
-
-        sauce
-          .save()
-          .then(
-            res.status(200).json({
-              status: 'succès',
-              message: 'Votre avis a été pris en compte',
-            })
-          )
-          .catch((err) => res.status(400).json({ error }));
-      } else {
+      
+      
+      
+          else {
         res.status(200).json({
           statut: 'null',
           message: 'Vous avez deja donnée votre avis',
